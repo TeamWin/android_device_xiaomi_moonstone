@@ -46,6 +46,7 @@ QCOM_BOARD_PLATFORMS += xiaomi_sm6375
 # Kernel
 VENDOR_CMDLINE := "androidboot.hardware=qcom \
                    androidboot.memcg=1 \
+		   androidboot.selinux=permissive \
                    androidboot.usbcontroller=4e00000.dwc3 \
                    cgroup.memory=nokmem,nosocket \
                    loop.max_part=7 \
@@ -58,7 +59,7 @@ VENDOR_CMDLINE := "androidboot.hardware=qcom \
                    androidboot.init_fatal_reboot_target=recovery"
 
 BOARD_KERNEL_PAGESIZE := 4096
-BOARD_KERNEL_BASE          := 0x00000000
+BOARD_KERNEL_BASE := 0x00000000
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_CLANG_COMPILE := true
@@ -100,7 +101,10 @@ AB_OTA_PARTITIONS += \
 BOARD_AVB_ENABLE := true
 
 # Partitions
+BOARD_FLASH_BLOCK_SIZE := 262144 # (BOARD_KERNEL_PAGESIZE * 64)
 BOARD_BOOTIMAGE_PARTITION_SIZE := 134217728
+BOARD_DTBOIMG_PARTITION_SIZE := 8388608
+BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 100663296
 
 # Dynamic Partition
 BOARD_SUPER_PARTITION_SIZE := 9126805504
@@ -121,6 +125,7 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_COPY_OUT_VENDOR := vendor
 
 # Recovery
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
 BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 
@@ -171,3 +176,18 @@ TW_LOAD_VENDOR_MODULES := "adsp_loader_dlkm.ko"
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone20/temp"
 TW_BATTERY_SYSFS_WAIT_SECONDS := 5
 TW_BACKUP_EXCLUSIONS := /data/fonts
+
+# TWRP Debug Flags
+TWRP_INCLUDE_LOGCAT := true
+TARGET_USES_LOGD := true
+
+#
+# For local builds only
+#
+# TWRP zip installer
+ifneq ($(wildcard bootable/recovery/installer/.),)
+    USE_RECOVERY_INSTALLER := true
+    RECOVERY_INSTALLER_PATH := bootable/recovery/installer
+endif
+# end local build flags
+#

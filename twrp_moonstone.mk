@@ -30,4 +30,4 @@ PRODUCT_MODEL := POCO X5
 PRODUCT_MANUFACTURER := Xiaomi
 
 # Assert
-TARGET_OTA_ASSERT_DEVICE := moonstone
+TARGET_OTA_ASSERT_DEVICE := moonstone,sunstone
